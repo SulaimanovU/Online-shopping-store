@@ -1,0 +1,4 @@
+{"message":"some thing","level":"info","timestamp":"2020-09-01 12:26:28"}
+{"message":"some thing","level":"info","timestamp":"2020-09-01 12:26:33"}
+{"level":"error","message":"","timestamp":"2020-09-01 12:28:57"}
+{"message":"Executing (default): SELECT 1+1 AS result","level":"info","timestamp":"2020-09-01 12:32:03"}
