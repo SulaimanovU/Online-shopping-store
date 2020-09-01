@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./database');
 
-const star = sequelize.define('star', {
+const reply = sequelize.define('reply', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -12,10 +12,25 @@ const star = sequelize.define('star', {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    starsts: {
-        type: Sequelize.FLOAT,
-        allowNull: false
+    text: {
+        type: Sequelize.STRING,
+        allowNull: false,
     }
 });
 
-module.exports = star;
+module.exports = reply;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
