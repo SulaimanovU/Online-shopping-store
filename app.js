@@ -54,13 +54,14 @@ const content = require('./routes/content');
 
 // All Used Express Routes
 
-app.use('/', (req, res, next) => {
-    res.json({ msg: "Hello world :)" });
+
+app.use('/kotak', (req, res, next) => {
+    res.json({ msg: "Hello kotak :)" });
 })
 
-app.use('admin', admin);
-app.use('user', user);
-app.use('content', content);
+app.use('/admin', admin);
+app.use('/user', user);
+app.use('/content', content);
 
 
 // All Used Models Declaration

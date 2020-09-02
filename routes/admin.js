@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const isAuth = require('../middleware/is-auth');
+const admin = require('../controllers/admin');
 const router = express.Router();
 
 // AUTHORIZTION *********************************************************
@@ -11,7 +12,7 @@ router.post(
         body('name').trim().not().isEmpty(),
         body('password').trim().not().isEmpty()
     ],
-    (req, res, next) => {}
+    admin.login
 );
 
 // PRODUCT *********************************************************

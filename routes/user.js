@@ -14,7 +14,7 @@ router.post(
     (req, res, next) => {}
 );
 
-router.get('/verify', clientAuthController.verify);
+router.get('/verify', (req, res, next) => {});
 
 // COMMENT *********************************************************
 
