@@ -1,20 +1,66 @@
 // All Used External Modules
+const path = require('path');
 const express = require('express');
 const envData = require('./middleware/dotenv')();
 const sequelize = require('./models/database');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const uniqueSlug = require('unique-slug');
+const helmet = require('helmet');
+
 const app = express();
 
 
 
 
+// All Used External Middlewares
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'images');
+  },
+  filename: function (req, file, cb) {
+    cb(null, uniqueSlug() + uniqueSlug() + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+    if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+        cb(null, true);
+    }else{
+        cb(null, false);
+    }
+}
+ 
+
+app.use(multer({ storage: storage, fileFilter: fileFilter }).array('myFiles', 12));
+app.use(bodyParser.json());
+app.use(helmet());
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
 
 // All Routes Declarations
 
-
+const admin = require('./routes/admin');
+const user = require('./routes/user');
+const content = require('./routes/content');
 
 
 // All Used Express Routes
 
+app.use('/', (req, res, next) => {
+    res.json({ msg: "Hello world :)" });
+})
+
+app.use('admin', admin);
+app.use('user', user);
+app.use('content', content);
 
 
 // All Used Models Declaration
@@ -56,6 +102,8 @@ Color.belongsToMany(Product, { through: 'prodcolors' });
 
 Product.belongsToMany(User, { through: 'carts' });
 User.belongsToMany(Product, { through: 'carts' });
+
+
 
 
 // Error Handler Middleware Which Should Executes Last

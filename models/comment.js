@@ -19,6 +19,10 @@ const comment = sequelize.define('comment', {
     text: {
         type: Sequelize.STRING,
         allowNull: false,
+    },
+    active: {
+        type: Sequelize.STRING,
+        defaultValue: false
     }
 });
 

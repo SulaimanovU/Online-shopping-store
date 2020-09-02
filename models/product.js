@@ -14,7 +14,7 @@ const product = sequelize.define('product', {
     },
     star: {
         type: Sequelize.FLOAT,
-        allowNull: false
+        defaultValue: 0
     },
     price: {
         type: Sequelize.INTEGER,
@@ -54,7 +54,7 @@ const product = sequelize.define('product', {
     },
     buycount: {
         type: Sequelize.STRING,
-        allowNull: false
+        defaultValue: 0
     },
 });
 
