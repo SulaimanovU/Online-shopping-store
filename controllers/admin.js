@@ -107,8 +107,6 @@ exports.createPorduct = async (req, res, next) => {
 }
 
 
-
-
 exports.updatePorduct = async (req, res, next) => {
 
     const errors = validationResult(req);
@@ -202,8 +200,6 @@ exports.updatePorduct = async (req, res, next) => {
     }
     
 } 
-
-
 
 
 exports.deleteProduct = async (req, res, next) => {
