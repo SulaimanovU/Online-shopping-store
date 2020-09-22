@@ -10,37 +10,21 @@ const product = sequelize.define('product', {
     },
     name: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false
     },
-    star: {
-        type: Sequelize.FLOAT,
-        defaultValue: 0
+    color: {
+        type: Sequelize.STRING,
+        allowNull: false
     },
     price: {
         type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    composition: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    season: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    assurance: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    madein: {
-        type: Sequelize.STRING,
         allowNull: false
     },
     discount: {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    type: {
+    category: {
         type: Sequelize.STRING,
         allowNull: false
     },
@@ -51,11 +35,7 @@ const product = sequelize.define('product', {
     description: {
         type: Sequelize.STRING,
         allowNull: false
-    },
-    buycount: {
-        type: Sequelize.STRING,
-        defaultValue: 0
-    },
+    }
 });
 
 module.exports = product;

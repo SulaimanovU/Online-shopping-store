@@ -23,18 +23,15 @@ router.post(
     [
         body('name').trim().not().isEmpty(),
         body('price').isInt(),
-        body('composition').trim().not().isEmpty(),
-        body('season').trim().not().isEmpty(),
-        body('assurance').isInt(),
-        body('madein').trim().not().isEmpty(),
         body('discount').isInt(),
-        body('type').isIn(['hoodie', 'sweatshirt', 'hoody']),
-        body('gender').isIn(['male', 'female']),
+        body('category').isIn(['hoodie', 'sweatshirt', 'hoody']),
+        body('gender').isIn(['male', 'female', 'unisex']),
         body('description').trim().not().isEmpty(),
-        body('colors').not().isEmpty(),
+        body('color').not().isEmpty(),
         body('sizes').not().isEmpty(),
+        body('images').not().isEmpty()
     ],
-    (req, res, next) => {}
+    admin.createPorduct
 );
 
 
@@ -42,20 +39,20 @@ router.put(
     '/product',
     isAuth.admin,
     [
+        body('prodId').isInt(),
         body('name').trim().not().isEmpty(),
         body('price').isInt(),
-        body('composition').trim().not().isEmpty(),
-        body('season').trim().not().isEmpty(),
-        body('assurance').isInt(),
-        body('madein').trim().not().isEmpty(),
         body('discount').isInt(),
-        body('type').isIn(['hoodie', 'sweatshirt', 'hoody']),
-        body('gender').isIn(['male', 'female']),
+        body('category').isIn(['hoodie', 'sweatshirt', 'hoody']),
+        body('gender').isIn(['male', 'female', 'unisex']),
         body('description').trim().not().isEmpty(),
-        body('colors').not().isEmpty(),
+        body('color').not().isEmpty(),
         body('sizes').not().isEmpty(),
+        body('images').not().isEmpty(),
+        body('deletedImages').not().isEmpty(),
+        body('deletedSizes').not().isEmpty()
     ],
-    (req, res, next) => {}
+    admin.updatePorduct
 );
 
 router.delete(

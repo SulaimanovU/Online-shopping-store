@@ -11,7 +11,7 @@ exports.user = (req, res, next) => {
     const token = authHeader.split(' ')[1];
     let decodedToken;
     try {
-        decodedToken = jwt.verify(token, 'secretcodeclient');
+        decodedToken = jwt.verify(token, 'supersecretusercode');
     } catch(err){
         err.statusCode = 500;
         throw err;
@@ -39,7 +39,7 @@ exports.admin = (req, res, next) => {
     const token = authHeader.split(' ')[1];
     let decodedToken;
     try {
-        decodedToken = jwt.verify(token, 'secretcodecolab');
+        decodedToken = jwt.verify(token, 'supersecretadmincode');
     } catch(err){
         err.statusCode = 500;
         throw err;

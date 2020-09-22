@@ -1,1 +1,5 @@
-{"level":"error","message":"","timestamp":"2020-09-01 12:28:57"}
+{"status":401,"data":"empty","level":"error","message":"Wrong admin name or password!","timestamp":"2020-09-02 18:43:15"}
+{"status":422,"data":[{"value":"","msg":"Invalid value","param":"name","location":"body"}],"level":"error","message":"Validation failed, entered data is incorrect.","timestamp":"2020-09-02 18:44:03"}
+{"status":422,"data":[{"value":"krutyak","msg":"Invalid value","param":"assurance","location":"body"}],"level":"error","message":"Validation failed, entered data is incorrect.","timestamp":"2020-09-12 00:50:45"}
+{"status":422,"data":[{"value":"gender","msg":"Invalid value","param":"gender","location":"body"}],"level":"error","message":"Validation failed, entered data is incorrect.","timestamp":"2020-09-23 00:10:12"}
+{"status":422,"data":[{"msg":"Invalid value","param":"gender","location":"body"}],"level":"error","message":"Validation failed, entered data is incorrect.","timestamp":"2020-09-23 00:39:29"}
