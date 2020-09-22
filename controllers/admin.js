@@ -3,6 +3,7 @@ const ProdSize = require('../models/prod-size');
 const Product = require('../models/product');
 const Image = require('../models/image');
 const Size = require('../models/size');
+const Cart = require('../models/cart');
 const jwt = require('jsonwebtoken');
 
 
@@ -126,17 +127,21 @@ exports.updatePorduct = async (req, res, next) => {
     const gender = req.body.gender;
     const description = req.body.description;
     const color = req.body.color;
-    const sizes = req.body.sizes;
-    const images = req.body.images;
+    
+    const images = [];
+    const sizes = [];
+    
+    if(req.body.images)  images = req.body.images;
+    if(req.body.sizes)  sizes = req.body.sizes;
+        
+    
+    
     let deletedImages = [];
     let deletedSizes = [];
     
-    if(req.body.deletedImages){
-        deletedImages = req.body.deletedImages;
-    }
-    if(req.body.deletedSizes){
-        deletedSizes = req.body.deletedSizes;
-    }
+    if(req.body.deletedImages)  deletedImages = req.body.deletedImages;
+    if(req.body.deletedSizes)   deletedSizes = req.body.deletedSizes;
+        
     
     let product = {};
     
@@ -190,9 +195,6 @@ exports.updatePorduct = async (req, res, next) => {
             })
         }
         
-        product.images = imageArray;
-        product.sizes = sizeArray;
-        
         res.status(200).json({ product: product });
     }
     catch(err) {
@@ -204,7 +206,45 @@ exports.updatePorduct = async (req, res, next) => {
 
 
 
-
+exports.deleteProduct = async (req, res, next) => {
+    
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        const error = new Error('Validation failed, entered data is incorrect.');
+        error.statusCode = 422;
+        error.data = errors.array();
+        next(error);
+    }
+    
+    const prodId = req.body.prodId;
+    
+    
+    try {
+        const cartArray = await Cart.findAll({ where: { productId: prodId } });
+        const imageArray = await Image.findAll({ where: { productId: prodId } });
+        const prodsizeArray = await ProdSize.findAll({ where: { productId: prodId } });
+        const product = await Product.findByPk(prodId);
+        
+        for(let i = 0; i < cartArray.length; i++){
+            await cartArray[i].destroy();
+        }
+        
+        for(let i = 0; i < imageArray.length; i++){
+            await imageArray[i].destroy();
+        }
+        
+        for(let i = 0; i < prodsizeArray.length; i++){
+            await prodsizeArray[i].destroy();
+        }
+        
+        await product.destroy();
+        
+        res.status(200).json({ msg: 'Product successfuly deleted!' });
+    }
+    catch(err) {
+        next(err);
+    }
+}
 
 
 

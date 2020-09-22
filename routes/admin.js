@@ -42,15 +42,11 @@ router.put(
         body('prodId').isInt(),
         body('name').trim().not().isEmpty(),
         body('price').isInt(),
-        body('discount').isInt(),
+        body('discount').isInt({ max: 100 }),
         body('category').isIn(['hoodie', 'sweatshirt', 'hoody']),
         body('gender').isIn(['male', 'female', 'unisex']),
         body('description').trim().not().isEmpty(),
-        body('color').not().isEmpty(),
-        body('sizes').not().isEmpty(),
-        body('images').not().isEmpty(),
-        body('deletedImages').not().isEmpty(),
-        body('deletedSizes').not().isEmpty()
+        body('color').not().isEmpty()
     ],
     admin.updatePorduct
 );
@@ -58,7 +54,7 @@ router.put(
 router.delete(
     '/product', 
     isAuth.admin,
-    (req, res, next) => {}
+    admin.deleteProduct
 );
 
 // USER DATA MANIPULATION *********************************************************
