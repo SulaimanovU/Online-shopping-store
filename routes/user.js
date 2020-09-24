@@ -1,20 +1,47 @@
 const express = require('express');
 const { body } = require('express-validator');
 const isAuth = require('../middleware/is-auth');
+const User = require('../models/user');
 const router = express.Router();
 
 // AUTHORIZTION *********************************************************
+router.put(
+    '/signup',
+    [
+        body('email').isEmail()
+            .custom((value, { red }) => {
+                return User.findOne({where: {email: value}}).then(userData => {
+                    if(userData) return Promise.reject('Email address already exist');
+                })
+            }),
+        body('password').trim().not().isEmpty()
+    ],
+    (req, res, next) => {}
+);
 
 router.post(
     '/login',
     [
-        body('email').isEmpty(),
+        body('email').isEmail(),
         body('password').trim().not().isEmpty()
     ],
     (req, res, next) => {}
 );
 
 router.get('/verify', (req, res, next) => {});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // COMMENT *********************************************************
 
