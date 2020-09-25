@@ -65,8 +65,6 @@ exports.signup = async (req, res, next) => {
 };
 
 
-
-
 exports.login = async (req, res, next) => {
     
     const errors = validationResult(req);
@@ -126,7 +124,6 @@ exports.login = async (req, res, next) => {
 };
 
 
-
 exports.verify = async (req, res, next) => {
     const email = req.query.email;
     const password = req.query.hashedpw;
@@ -144,6 +141,20 @@ exports.verify = async (req, res, next) => {
     }
 }
 
+
+exports.getCart = async (req, res, next) => {
+    
+    const userId = req.userId;
+    
+    try {
+        const carts = await Cart.findAll({ where: { userId: userId } });
+        
+        res.status(200).json({ carts: carts });
+    }
+    catch(err) {
+        next(err);
+    }
+}
 
 
 exports.addCart = async (req, res, next) => {
@@ -173,6 +184,7 @@ exports.addCart = async (req, res, next) => {
         next(err);
     }   
 }
+
 
 exports.deleteCart = async (req, res, next) => {
     

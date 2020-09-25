@@ -33,17 +33,6 @@ router.get('/verify', user.verify);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 // COMMENT *********************************************************
 
 router.post(
@@ -81,7 +70,7 @@ router.delete(
 router.get(
     '/cart', 
     isAuth.user,
-    (req, res, next) => {}
+    user.getCart
 );
 
 
@@ -91,7 +80,7 @@ router.post(
     [
         body('prodId').isInt(),
     ],
-    (req, res, next) => {}
+    user.addCart
 );
 
 
@@ -101,7 +90,7 @@ router.delete(
     [
         body('cartId').isInt(),
     ],
-    (req, res, next) => {}
+    user.deleteCart
 );
 
 
@@ -112,10 +101,8 @@ router.put(
         body('cartId').isInt(),
         body('quantity').isInt({ min: 2 })
     ],
-    (req, res, next) => {}
+    user.setCartNumber
 );
-
-
 
 
 
