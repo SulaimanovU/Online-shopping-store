@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const isAuth = require('../middleware/is-auth');
 const User = require('../models/user');
+const user = require('../controllers/user');
 const router = express.Router();
 
 // AUTHORIZTION *********************************************************
@@ -11,12 +12,12 @@ router.put(
         body('email').isEmail()
             .custom((value, { red }) => {
                 return User.findOne({where: {email: value}}).then(userData => {
-                    if(userData) return Promise.reject('Email address already exist');
+                    if(userData)  return Promise.reject('Email address already exist');
                 })
             }),
         body('password').trim().not().isEmpty()
     ],
-    (req, res, next) => {}
+    user.signup
 );
 
 router.post(
@@ -25,10 +26,10 @@ router.post(
         body('email').isEmail(),
         body('password').trim().not().isEmpty()
     ],
-    (req, res, next) => {}
+    user.login
 );
 
-router.get('/verify', (req, res, next) => {});
+router.get('/verify', user.verify);
 
 
 
@@ -74,6 +75,7 @@ router.delete(
     (req, res, next) => {}
 );
 
+
 // CART *********************************************************
 
 router.get(
@@ -96,31 +98,9 @@ router.post(
 router.delete(
     '/cart', 
     isAuth.user,
-    (req, res, next) => {}
-);
-
-// ORDER *********************************************************
-
-router.get(
-    '/order', 
-    isAuth.user,
-    (req, res, next) => {}
-);
-
-
-router.post(
-    '/order',
-    isAuth.user,
     [
-        body('prodId').isInt(),
+        body('cartId').isInt(),
     ],
-    (req, res, next) => {}
-);
-
-
-router.delete(
-    '/order', 
-    isAuth.user,
     (req, res, next) => {}
 );
 
@@ -129,7 +109,7 @@ router.put(
     '/quantity', 
     isAuth.user,
     [
-        body('prodId').isInt(),
+        body('cartId').isInt(),
         body('quantity').isInt({ min: 2 })
     ],
     (req, res, next) => {}

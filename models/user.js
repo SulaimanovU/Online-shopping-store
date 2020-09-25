@@ -17,7 +17,7 @@ const user = sequelize.define('user', {
         allowNull: false
     },
     active: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         defaultValue: false
     }
 });
