@@ -50,7 +50,6 @@ app.use('/content', content);
 const Product = require('./models/product');
 const User = require('./models/user');
 const Image = require('./models/image');
-const Size = require('./models/size');
 const Order = require('./models/order');
 const ProdSize = require('./models/prod-size');
 const Cart = require('./models/cart');
@@ -64,11 +63,11 @@ Image.belongsTo(Product);
 Product.hasMany(Order, {onDelete: 'CASCADE'});
 Order.belongsTo(Product);
 
+Product.hasMany(ProdSize, {onDelete: 'CASCADE'});
+ProdSize.belongsTo(Product);
+
 User.hasMany(Order, {onDelete: 'CASCADE'});
 Order.belongsTo(User);
-
-Product.belongsToMany(Size, { through: ProdSize });
-Size.belongsToMany(Product, { through: ProdSize });
 
 
 Product.belongsToMany(User, { through: Cart });
