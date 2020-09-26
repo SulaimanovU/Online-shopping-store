@@ -10,7 +10,7 @@ exports.getProducts = async (req, res, next) => {
     const perPage = 10;
     
     try {
-        const products = await Product.findAll({
+        let products = await Product.findAll({
             where: {
                 category: category
             },
@@ -19,7 +19,7 @@ exports.getProducts = async (req, res, next) => {
         });
         
         for(let i = 0; i < products.length; i++){
-            products[i].image = await Image.findOne({ where: { productId: products[i].id } });
+            products[i].dataValues.image = await Image.findOne({ where: { productId: products[i].id } });
         }
         
         res.status(200).json({ products: products });
@@ -36,9 +36,9 @@ exports.getProductData = async (req, res, next) => {
     try {
         let product = await Product.findByPk(prodId);
         
-        product.dataValues.images = await Image.findAll({ attributes: ['imageUrl'], where: { productId: prodId } });
+        product.dataValues.images = await Image.findAll({ attributes: ['id', 'imageUrl'], where: { productId: prodId } });
         
-        product.dataValues.sizes = await ProdSize.findAll({ attributes: ['rus', 'usa'], where: { productId: prodId } });
+        product.dataValues.sizes = await ProdSize.findAll({ attributes: ['id', 'rus', 'usa'], where: { productId: prodId } });
         
         res.status(200).json({ product: product });
     }
