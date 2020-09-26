@@ -13,3 +13,10 @@
 {"status":500,"data":"empty","level":"error","message":"string violation: password cannot be an array or an object","timestamp":"2020-09-25 05:39:01"}
 {"status":404,"data":"empty","level":"error","message":"A user with this email could not found.","timestamp":"2020-09-25 05:49:07"}
 {"status":401,"data":"empty","level":"error","message":"A mail of this user is not verificated.","timestamp":"2020-09-25 05:49:32"}
+{"status":500,"data":"empty","level":"error","message":"jwt expired","timestamp":"2020-09-26 05:34:54"}
+{"status":422,"data":[{"msg":"Invalid value","param":"gender","location":"body"}],"level":"error","message":"Validation failed, entered data is incorrect.","timestamp":"2020-09-26 05:35:27"}
+{"status":500,"data":"empty","level":"error","message":"user.createCart is not a function","timestamp":"2020-09-26 05:38:36"}
+{"status":422,"data":[{"msg":"Invalid value","param":"prodId","location":"body"}],"level":"error","message":"Validation failed, entered data is incorrect.","timestamp":"2020-09-26 06:47:31"}
+{"status":422,"data":[{"value":"prodId","msg":"Invalid value","param":"prodId","location":"body"}],"level":"error","message":"Validation failed, entered data is incorrect.","timestamp":"2020-09-26 06:48:20"}
+{"status":500,"data":"empty","level":"error","message":"Cannot read property 'id' of undefined","timestamp":"2020-09-26 07:03:02"}
+{"status":500,"data":"empty","level":"error","message":"Cannot read property 'destroy' of null","timestamp":"2020-09-26 07:05:29"}

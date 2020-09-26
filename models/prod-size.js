@@ -7,6 +7,14 @@ const prodSize = sequelize.define('prodSize', {
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
+    },
+    rus: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
+    usa: {
+        type: Sequelize.STRING,
+        allowNull: false
     }
 });
 

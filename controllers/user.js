@@ -1,6 +1,8 @@
 const { validationResult } = require('express-validator');
 const mailgen = require('../middleware/email-template');
+const Product = require('../models/product');
 const nodemailer = require('nodemailer');
+const Image = require('../models/image');
 const Cart = require('../models/cart');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
@@ -147,8 +149,13 @@ exports.getCart = async (req, res, next) => {
     const userId = req.userId;
     
     try {
-        const carts = await Cart.findAll({ where: { userId: userId } });
+        let carts = await Cart.findAll({ where: { userId: userId } });
         
+        for(let i = 0; i < carts.length; i++){
+            carts[i].dataValues.image = await Image.findOne({ attributes: ['imageUrl'], where: { productId: carts[i].productId } });
+            carts[i].dataValues.product = await Product.findOne({ attributes: ['name', 'price', 'discount'], where: { id: carts[i].productId } });
+        }
+
         res.status(200).json({ carts: carts });
     }
     catch(err) {
@@ -174,8 +181,9 @@ exports.addCart = async (req, res, next) => {
     try {
         const user = await User.findByPk(userId);
         
-        const newCartPt = user.createCart({
-            productId: prodId
+        const newCartPt = await Cart.create({
+            productId: prodId,
+            userId: userId
         });
         
         res.status(200).json({ newCartPt: newCartPt });
@@ -240,6 +248,8 @@ exports.setCartNumber = async (req, res, next) => {
         next(err);
     }
 }
+
+
 
 
 
