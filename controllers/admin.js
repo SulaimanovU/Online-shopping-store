@@ -2,7 +2,6 @@ const { validationResult } = require('express-validator');
 const ProdSize = require('../models/prod-size');
 const Product = require('../models/product');
 const Image = require('../models/image');
-const Size = require('../models/size');
 const Cart = require('../models/cart');
 const jwt = require('jsonwebtoken');
 
@@ -90,7 +89,8 @@ exports.createPorduct = async (req, res, next) => {
         for(let i = 0; i < sizes.length; i++){
             
             sizeArray[i] = await ProdSize.create({
-                sizeId: images[i].id,
+                rus: sizes[i].rus,
+                usa: sizes[i].usa,
                 productId: product.Info.id
             })
         }
@@ -126,8 +126,8 @@ exports.updatePorduct = async (req, res, next) => {
     const description = req.body.description;
     const color = req.body.color;
     
-    const images = [];
-    const sizes = [];
+    let images = [];
+    let sizes = [];
     
     if(req.body.images)  images = req.body.images;
     if(req.body.sizes)  sizes = req.body.sizes;
@@ -141,8 +141,6 @@ exports.updatePorduct = async (req, res, next) => {
     if(req.body.deletedSizes)   deletedSizes = req.body.deletedSizes;
         
     
-    let product = {};
-    
     try {
         const productInstance = await Product.findByPk(prodId);
         
@@ -155,10 +153,7 @@ exports.updatePorduct = async (req, res, next) => {
         productInstance.description = description;
         
         
-        product.Info = await productInstance.save();
-        
-        let imageArray = [];
-        let sizeArray = [];
+        let product = await productInstance.save();
         
         // Here we delete images from database
         for(let i = 0; i < deletedImages.length; i++){
@@ -178,20 +173,25 @@ exports.updatePorduct = async (req, res, next) => {
         // Here we create image records to database
         for(let i = 0; i < images.length; i++){
             
-            imageArray[i] = await Image.create({
+            await Image.create({
                 imageUrl: images[i].url,
-                productId: product.Info.id
+                productId: product.id
             })
         }
         
         // Here we create size records to database
         for(let i = 0; i < sizes.length; i++){
             
-            sizeArray[i] = await ProdSize.create({
-                sizeId: images[i].id,
-                productId: product.Info.id
+            await ProdSize.create({
+                rus: sizes[i].rus,
+                usa: sizes[i].usa,
+                productId: product.id
             })
         }
+
+        product.dataValues.images = await Image.findAll({ attributes: ['imageUrl'], where: { productId: prodId } });
+        
+        product.dataValues.sizes = await ProdSize.findAll({ attributes: ['rus', 'usa'], where: { productId: prodId } });
         
         res.status(200).json({ product: product });
     }
