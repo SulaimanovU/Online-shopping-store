@@ -31,14 +31,24 @@ exports.getProducts = async (req, res, next) => {
 
 
 exports.getProductData = async (req, res, next) => {
+    
+    if(req.query.prodId === undefined || req.query.prodId === null){
+        const error = new Error(`You did not pass a 'prodId' query parameter`);
+        error.statusCode = 422;
+        error.data = 'query[prodId] - is empty';
+        next(error);
+    }
+    
     const prodId = req.query.prodId;
     
+    let product = {};
+    
     try {
-        let product = await Product.findByPk(prodId);
+        product.info = await Product.findByPk(prodId);
         
-        product.dataValues.images = await Image.findAll({ attributes: ['id', 'imageUrl'], where: { productId: prodId } });
+        product.images = await Image.findAll({ attributes: ['id', 'imageUrl'], where: { productId: prodId } });
         
-        product.dataValues.sizes = await ProdSize.findAll({ attributes: ['id', 'rus', 'usa'], where: { productId: prodId } });
+        product.sizes = await ProdSize.findAll({ attributes: ['id', 'rus', 'usa'], where: { productId: prodId } });
         
         res.status(200).json({ product: product });
     }

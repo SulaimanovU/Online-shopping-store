@@ -65,7 +65,7 @@ exports.createPorduct = async (req, res, next) => {
     let product = {};
     
     try {
-        product.Info = await Product.create({
+        product.info = await Product.create({
             name: name,
             price: price,
             color: color,
@@ -140,9 +140,16 @@ exports.updatePorduct = async (req, res, next) => {
     if(req.body.deletedImages)  deletedImages = req.body.deletedImages;
     if(req.body.deletedSizes)   deletedSizes = req.body.deletedSizes;
         
+    let product = {};
     
     try {
         const productInstance = await Product.findByPk(prodId);
+        
+        if(!productInstance){
+            const error = new Error('Such product could not found.');
+            error.statusCode = 404;
+            throw error;
+        }
         
         productInstance.name = name;
         productInstance.price = price;
@@ -153,7 +160,7 @@ exports.updatePorduct = async (req, res, next) => {
         productInstance.description = description;
         
         
-        let product = await productInstance.save();
+        product.info = await productInstance.save();
         
         // Here we delete images from database
         for(let i = 0; i < deletedImages.length; i++){
@@ -189,9 +196,9 @@ exports.updatePorduct = async (req, res, next) => {
             })
         }
 
-        product.dataValues.images = await Image.findAll({ attributes: ['imageUrl'], where: { productId: prodId } });
+        product.images = await Image.findAll({ attributes: ['imageUrl'], where: { productId: prodId } });
         
-        product.dataValues.sizes = await ProdSize.findAll({ attributes: ['rus', 'usa'], where: { productId: prodId } });
+        product.sizes = await ProdSize.findAll({ attributes: ['rus', 'usa'], where: { productId: prodId } });
         
         res.status(200).json({ product: product });
     }
@@ -204,22 +211,28 @@ exports.updatePorduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
     
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        const error = new Error('Validation failed, entered data is incorrect.');
+    if(req.query.prodId === undefined || req.query.prodId === null){
+        const error = new Error(`You did not pass 'prodId' query parameter`);
         error.statusCode = 422;
-        error.data = errors.array();
+        error.data = 'query[prodId] - is empty';
         next(error);
     }
     
-    const prodId = req.body.prodId;
+    const prodId = req.query.prodId;
     
     
     try {
+        const product = await Product.findByPk(prodId);
+        
+        if(!product){
+            const error = new Error('Such product could not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        
         const cartArray = await Cart.findAll({ where: { productId: prodId } });
         const imageArray = await Image.findAll({ where: { productId: prodId } });
         const prodsizeArray = await ProdSize.findAll({ where: { productId: prodId } });
-        const product = await Product.findByPk(prodId);
         
         for(let i = 0; i < cartArray.length; i++){
             await cartArray[i].destroy();

@@ -295,6 +295,12 @@ exports.checkOut = async (req, res, next) => {
     try {
         const user = await User.findByPk(userId);
         
+        if(!user){
+            const error = new Error('Such user could not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        
         const userOrder = await user.createOrder({
             firstName: firstName,
             lastName: lastName,

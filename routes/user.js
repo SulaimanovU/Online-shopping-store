@@ -103,7 +103,7 @@ router.put(
 
 
 router.post(
-    '/order',
+    '/checkout',
     isAuth.user,
     [
         body('firstName').trim().not().isEmpty(),
