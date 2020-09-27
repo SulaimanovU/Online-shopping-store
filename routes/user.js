@@ -15,7 +15,7 @@ router.put(
                     if(userData)  return Promise.reject('Email address already exist');
                 })
             }),
-        body('password').trim().not().isEmpty()
+        body('password').trim().isLength({ min: 5 })
     ],
     user.signup
 );
@@ -24,7 +24,7 @@ router.post(
     '/login',
     [
         body('email').isEmail(),
-        body('password').trim().not().isEmpty()
+        body('password').trim().isLength({ min: 5 })
     ],
     user.login
 );
@@ -41,7 +41,7 @@ router.post(
     [
         body('name').trim().not().isEmpty(),
         body('star').isFloat({ min: 0, max: 5 }),
-        body('text').trim().not().isEmpty(),
+        body('text').trim().not().isEmpty()
     ],
     (req, res, next) => {}
 );
@@ -52,7 +52,7 @@ router.put(
     [
         body('name').trim().not().isEmpty(),
         body('star').isFloat({ min: 0, max: 5 }),
-        body('text').trim().not().isEmpty(),
+        body('text').trim().not().isEmpty()
     ],
     (req, res, next) => {}
 );
@@ -68,7 +68,7 @@ router.delete(
 // CART *********************************************************
 
 router.get(
-    '/cart', 
+    '/carts', 
     isAuth.user,
     user.getCart
 );
@@ -87,15 +87,12 @@ router.post(
 router.delete(
     '/cart', 
     isAuth.user,
-    [
-        body('cartId').isInt(),
-    ],
     user.deleteCart
 );
 
 
 router.put(
-    '/quantity', 
+    '/cart', 
     isAuth.user,
     [
         body('cartId').isInt(),
@@ -104,6 +101,22 @@ router.put(
     user.setCartNumber
 );
 
+
+router.post(
+    '/order',
+    isAuth.user,
+    [
+        body('firstName').trim().not().isEmpty(),
+        body('lastName').trim().not().isEmpty(),
+        body('productName').trim().not().isEmpty(),
+        body('quantity').isInt({ min: 1 }),
+        body('price').isInt(),
+        body('discount').isInt(),
+        body('payService').isIn(['visa', 'paypal']),
+        body('cartNumber').trim().not().isEmpty()
+    ],
+    user.checkOut
+);
 
 
 module.exports = router;
