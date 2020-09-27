@@ -133,6 +133,12 @@ exports.verify = async (req, res, next) => {
     try {
         const user = await User.findOne({ where: { email: email, password: password } })
         
+        if(!user){
+            const error = new Error('Oops something went wrong, try again after a few minut..');
+            error.statusCode = 404;
+            throw error;
+        }
+        
         user.active = 1;
         await user.save();
 
@@ -181,6 +187,12 @@ exports.addCart = async (req, res, next) => {
     try {
         const user = await User.findByPk(userId);
         
+        if(!user){
+            const error = new Error('Such user could not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        
         const newCartPt = await Cart.create({
             productId: prodId,
             userId: userId
@@ -196,20 +208,24 @@ exports.addCart = async (req, res, next) => {
 
 exports.deleteCart = async (req, res, next) => {
     
-    const errors = validationResult(req);
-    
-    if(!errors.isEmpty()){
-        const error = new Error('Validation failed, entered data is incorrect.');
+    if(req.query.cartId === undefined || req.query.cartId === null){
+        const error = new Error(`You did not pass a 'cardId' query parameter`);
         error.statusCode = 422;
-        error.data = errors.array();
+        error.data = 'query[cardId] - is empty';
         next(error);
     }
     
-    const cartId = req.body.cartId;
+    const cartId = req.query.cartId;
     const userId = req.userId;
     
     try {
         const cart = await Cart.findOne({ where: { id: cartId, userId: userId } });
+        
+        if(!cart){
+            const error = new Error('Such cart could not found.');
+            error.statusCode = 404;
+            throw error;
+        }
         
         await cart.destroy();
         
@@ -239,6 +255,12 @@ exports.setCartNumber = async (req, res, next) => {
     try {
         const cart = await Cart.findOne({ where: { id: cartId, userId: userId } });
         
+        if(!cart){
+            const error = new Error('Such cart could not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+        
         cart.quantity = quantity;
         const updatedCartPt = await cart.save();
         
@@ -250,6 +272,46 @@ exports.setCartNumber = async (req, res, next) => {
 }
 
 
+exports.checkOut = async (req, res, next) => {
+    const errors = validationResult(req);
+    
+    if(!errors.isEmpty()){
+        const error = new Error('Validation failed, entered data is incorrect.');
+        error.statusCode = 422;
+        error.data = errors.array();
+        next(error);
+    }
+    
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const productName = req.body.productName;
+    const quantity = req.body.quantity;
+    const price = req.body.price;
+    const discount = req.body.discount;
+    const payService = req.body.payService;
+    const cartNumber = req.body.cartNumber;
+    const userId = req.userId;
+    
+    try {
+        const user = await User.findByPk(userId);
+        
+        const userOrder = await user.createOrder({
+            firstName: firstName,
+            lastName: lastName,
+            productName: productName,
+            quantity: quantity,
+            price: price,
+            discount: discount,
+            payService: payService,
+            cartNumber: cartNumber
+        });
+        
+        res.status(200).json({ msg: 'Product successfuly ordered!'});
+    }
+    catch(err) {
+        next(err);
+    }
+}
 
 
 
