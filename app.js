@@ -60,9 +60,6 @@ const Cart = require('./models/cart');
 Product.hasMany(Image, {onDelete: 'CASCADE'});
 Image.belongsTo(Product);
 
-Product.hasMany(Order, {onDelete: 'CASCADE'});
-Order.belongsTo(Product);
-
 Product.hasMany(ProdSize, {onDelete: 'CASCADE'});
 ProdSize.belongsTo(Product);
 
