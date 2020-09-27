@@ -8,6 +8,8 @@ const multer = require('multer');
 const uniqueSlug = require('unique-slug');
 const logger = require('./middleware/logger');
 const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
+const openApiDoc = require('./documentation/openapi.json');
 
 const app = express();
 
@@ -16,6 +18,7 @@ const app = express();
 
 // All Used External Middlewares
 
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDoc));
 app.use(bodyParser.json());
 app.use(helmet());
 app.use((req, res, next) => {
@@ -38,7 +41,7 @@ const content = require('./routes/content');
 
 app.use('/word', (req, res, next) => {
     res.json({ msg: "Hello word :)" });
-})
+});
 
 app.use('/admin', admin);
 app.use('/user', user);
