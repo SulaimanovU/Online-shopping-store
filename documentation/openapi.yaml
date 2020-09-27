@@ -1,0 +1,986 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: 'Online Shopping Store API'
+  description: 'This is demo Online Shopping Store website.'
+  contact:
+    name: Ulan
+    url: https://toiber-demo.herokuapp.com/
+    email: suliamanovUlan@gmail.com
+  license:
+    name: MIT
+    url: http://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:3000/
+    description: Dev Server
+  - url: https://toiber-demo.herokuapp.com/
+    description: Prod Server
+tags:
+  - name: Admin
+    description: Admin user authentication and other CRUD operations
+  - name: User
+    description: Client user authentication and other CRUD operations
+  - name: Content
+    description: Operations to get web site content
+paths:
+
+  # USER / SIGNUP END POINT
+  /user/signup:  
+    put:
+      description: To sigup (create new user)
+      tags: 
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: 
+                  type: string
+                  example: sulaimanovUlan@gmail.com
+                password:
+                  type: string
+                  example: i'm-password
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: You should receive an email from us
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[password]- must be at least 10 chars long
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Client user data does not saved in database.
+                    
+                    
+  # USER / LOGIN END POINT
+  /user/login:  
+    post:
+      description: To login (get access for other operations)
+      tags: 
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: 
+                  type: string
+                  example: sulaimanovUlan@gmail.com
+                password:
+                  type: string
+                  example: i'm-password
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: really looong token string
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[password]- must be at least 5 chars long
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: A user with this email could not found.
+        401:
+          description: Lacks valid authentication credentials for the target resource
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: A mail of this user is not verificated <or> wrong password.
+                
+                
+  # USER / VERIFY END POINT      
+  /user/verify:  
+    get:
+      description: To verify user email
+      tags: 
+        - User
+      parameters: 
+        - name: email
+          in: query
+          description: automatically passed user email
+          schema:
+            type: string
+            properties:
+              email: 
+                type: string
+                example: sulaimanovUlan@gmail.com
+        - name: hashedpw
+          in: query
+          description: automatically passed hashed password
+          schema:
+            type: string
+            properties:
+              hashedpw: 
+                type: string
+                example: $2a$12$2ikjErAy.UVNr.O4b2Wo0u4kozEu/yboBont8g.Vz0MnUczfPY.12
+      responses:
+        200:
+          description: it will ber redirected
+          headers:
+            locations:
+              schema:
+                type: string
+                example: http://http://localhost:3000/someroute
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Oops something went wrong, try again after a few minut..
+                    
+                  
+  # USER / CREATE UPDATE DELETE CART PRODUCT END POINT
+  /user/cart:  
+    post:
+      description: To add produt into the cart
+      tags: 
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prodId:
+                  type: number
+                  example: 1
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  newCartPt:
+                    type: object
+                    example: 
+                      id: 1
+                      quantity: 1
+                      productId: 1
+                      userId: 1
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[prodId]- is empty
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Such client user could not found
+      security:
+        - authentication: []
+    put:
+      description: To update product quantity from cart
+      tags: 
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cartId: 
+                  type: number
+                  example: 1
+                quantity:
+                  type: number
+                  example: 3
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updatedCartPt:
+                    type: object
+                    example: 
+                      id: 1
+                      quantity: 3
+                      productId: 1
+                      userId: 1
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[quantity]- is empty
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Such cart could not found.
+      security:
+        - authentication: []
+    delete:
+      description: To delete product from cart
+      tags: 
+        - User
+      parameters: 
+        - name: cartId
+          in: query
+          description: Id of deleted product from cart
+          schema:
+            type: number
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Product successfully deleted from cart.
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Such cart could not found
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: You did not pass a 'cardId' query parameter
+                  data:
+                    type: object
+                    example: query[cardId] - is empty
+      security:
+        - authentication: []
+            
+            
+  # USER / GET CART PRODUCTS END POINT      
+  /user/carts:  
+    get:
+      description: To get produts from the cart
+      tags: 
+        - User
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  carts:
+                    type: array
+                    items:
+                      type: object
+                      example: 
+                        id: 1
+                        quantity: 1
+                        productId: 1
+                        userId: 1
+                        image: 
+                          imageUrl: someimageurl.jpg
+                        product: 
+                          name: productName
+                          price: 2500
+                          discount: 25
+      security:
+        - authentication: []
+        
+  
+  # USER / CHECKOUT END POINT
+  /user/checkout:  
+    post:
+      description: To order(pay) a product(s)
+      tags: 
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName: 
+                  type: string
+                  example: userFistName
+                lastName:
+                  type: string
+                  example: userLastName
+                productName: 
+                  type: string
+                  example: productName
+                quantity:
+                  type: number
+                  example: 1
+                price: 
+                  type: number
+                  example: 2500
+                discount:
+                  type: number
+                  example: 25
+                payService: 
+                  type: string
+                  example: visa
+                cartNumber:
+                  type: string
+                  example: 5610591081018250
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Product successfuly ordered!
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Such user could not found
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[cartNumber]- must not be empty
+      security:
+        - authentication: []
+        
+        
+  # ADMIN / LOGIN END POINT
+  /admin/login:  
+    post:
+      description: To login (get access for other operations)
+      tags: 
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: 
+                  type: string
+                  example: someloginname
+                password:
+                  type: string
+                  example: i'm-password
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: really looong token string
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[password]- must be at least 5 chars long
+        401:
+          description: Lacks valid authentication credentials for the target resource
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Wrong admin name or password!    
+                    
+                   
+  # ADMIN / CREATE UPDATE DELETE PRODUCT END POINT
+  /admin/product:  
+    post:
+      description: To add product
+      tags: 
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: 
+                  type: string
+                  example: nameOfProduct
+                price: 
+                  type: number
+                  example: 2500
+                discount: 
+                  type: number
+                  example: 25
+                category: 
+                  type: string
+                  example: sweatshirt
+                gender: 
+                  type: string
+                  example: male
+                description: 
+                  type: string
+                  example: someDescription
+                color: 
+                  type: string
+                  example: red
+                sizes: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      rus: 
+                        type: number
+                        example: 54
+                      usa:
+                        type: string
+                        example: 2XL
+                images: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        example: imageurl.jpg
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product:
+                    type: object
+                    properties:
+                      info:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                            example: 1
+                          name:
+                            type: string
+                            example: nameOfProduct
+                          price:
+                            type: number
+                            example: 2500
+                          color:
+                            type: string
+                            example: red
+                          discount:
+                            type: number
+                            example: 25
+                          category:
+                            type: string
+                            example: sweatshirt
+                          gender:
+                            type: string
+                            example: male
+                          description:
+                            type: string
+                            example: someDescription
+                      images:
+                        type: array
+                        items:
+                          example:
+                            id: 1
+                            imageUrl: imageurl.jpg
+                            productId: 1
+                      sizes:
+                        type: array
+                        items:
+                          example:
+                            id: 1
+                            rus: 54
+                            usa: 2XL
+                            productId: 1
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[name]- is empty
+      security:
+        - authentication: []
+    put:
+      description: To update product
+      tags: 
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: 
+                  type: string
+                  example: nameOfProduct
+                price: 
+                  type: number
+                  example: 2500
+                discount: 
+                  type: number
+                  example: 25
+                category: 
+                  type: string
+                  example: sweatshirt
+                gender: 
+                  type: string
+                  example: male
+                description: 
+                  type: string
+                  example: someDescription
+                color: 
+                  type: string
+                  example: red
+                sizes: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      rus: 
+                        type: number
+                        example: 54
+                      usa:
+                        type: string
+                        example: 2XL
+                images: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        example: imageurl.jpg
+                deletedSizes: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id: 
+                        type: number
+                        example: 1
+                deletedImages: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 1
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product:
+                    type: object
+                    properties:
+                      info:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                            example: 1
+                          name:
+                            type: string
+                            example: nameOfProduct
+                          price:
+                            type: number
+                            example: 2500
+                          color:
+                            type: string
+                            example: red
+                          discount:
+                            type: number
+                            example: 25
+                          category:
+                            type: string
+                            example: sweatshirt
+                          gender:
+                            type: string
+                            example: male
+                          description:
+                            type: string
+                            example: someDescription
+                      images:
+                        type: array
+                        items:
+                          example:
+                            id: 1
+                            imageUrl: imageurl.jpg
+                            productId: 1
+                      sizes:
+                        type: array
+                        items:
+                          example:
+                            id: 1
+                            rus: 54
+                            usa: 2XL
+                            productId: 1
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Validation failed, entered data is incorrect.
+                  data:
+                    type: object
+                    example: 
+                      errors: body[price]- is empty
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Such product could not found.
+      security:
+        - authentication: []
+    delete:
+      description: To delete product
+      tags: 
+        - Admin
+      parameters: 
+        - name: prodId
+          in: query
+          description: Id of deleted product
+          schema:
+            type: number
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Product successfully deleted!
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Such product could not found.
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: You did not pass 'prodId' query parameter
+                  data:
+                    type: object
+                    example: query[prodId] - is empty
+      security:
+        - authentication: []
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+
+
+  # CONTENT/ GET PRODUCT END POINT
+  /content/product:  
+    get:
+      description: To get full product data
+      tags: 
+        - Content
+      parameters: 
+        - name: prodId
+          in: query
+          description: Product id
+          schema:
+            type: number
+            properties:
+              colabId: 
+                type: number
+                example: 1
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product:
+                    type: object
+                    properties:
+                      info:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                            example: 1
+                          name:
+                            type: string
+                            example: nameOfProduct
+                          price:
+                            type: number
+                            example: 2500
+                          color:
+                            type: string
+                            example: red
+                          discount:
+                            type: number
+                            example: 25
+                          category:
+                            type: string
+                            example: sweatshirt
+                          gender:
+                            type: string
+                            example: male
+                          description:
+                            type: string
+                            example: someDescription
+                      images:
+                        type: array
+                        items:
+                          example:
+                            id: 1
+                            imageUrl: imageurl.jpg
+                            productId: 1
+                      sizes:
+                        type: array
+                        items:
+                          example:
+                            id: 1
+                            rus: 54
+                            usa: 2XL
+                            productId: 1
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: You did not pass 'prodId' query parameter
+                  data:
+                    type: object
+                    example: query[prodId] - is empty
+                    
+                    
+                    
+                    
+            
+                    
+  # CONTENT/ GET PRODUCTS END POINT
+  /content/products:  
+    get:
+      description: To get list of products
+      tags: 
+        - Content
+      parameters: 
+        - name: category
+          in: query
+          description: Product category name
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number (default 1)
+          schema:
+            type: number
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      example: 
+                        id: 1
+                        name: productName
+                        color: red
+                        price: 2500
+                        discount: 25
+                        category: sweatshirt
+                        description: someProductDescription
+                        image:
+                            id: 1
+                            imageUrl: productImageUrl.jpg
+                            productId: 1
+                    
+                    
+                    
+components:
+  securitySchemes:
+    authentication:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+                    
+                    
+  
