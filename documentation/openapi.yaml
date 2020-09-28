@@ -478,10 +478,10 @@ paths:
               properties:
                 name: 
                   type: string
-                  example: someloginname
+                  example: ulan
                 password:
                   type: string
-                  example: i'm-password
+                  example: ulan123
       responses:
         200:
           description: Ok
