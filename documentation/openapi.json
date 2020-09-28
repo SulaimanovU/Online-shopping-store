@@ -722,11 +722,11 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "example": "someloginname"
+                    "example": "ulan"
                   },
                   "password": {
                     "type": "string",
-                    "example": "i'm-password"
+                    "example": "ulan123"
                   }
                 }
               }
